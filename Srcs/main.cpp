@@ -37,6 +37,7 @@ int main(int argc, char* argv[]) {
     SETUP_PRIVILEGES();
   #endif
   UCI::init(Options);
+  Tune::init();
   TT.resize(Options["Hash"]);
   PSQT::init();
   Bitboards::init();
