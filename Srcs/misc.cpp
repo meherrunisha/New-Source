@@ -30,7 +30,7 @@ namespace {
 
 /// Version number. If Version is left empty, then compile date in the format
 /// DD-MM-YY and show in engine_info.
-static const string Version = "Al Qahtani X1";
+static const string Version = "Al Qahtani X2";
 
 /// Our fancy logging facility. The trick here is to replace cin.rdbuf() and
 /// cout.rdbuf() with two Tie objects that tie cin and cout to a file stream. We
@@ -112,16 +112,16 @@ const string engine_info(bool to_uci) {
   }
 
   ss << (Is64Bit ? " 64" : "")
-     << (HasPext ? " BMI2" : (HasPopCnt ? " Mod" : ""))
+     << (HasPext ? " xBMI2" : (HasPopCnt ? " xMod" : ""))
      << (to_uci  ? "\nid author ": " by ")
      << "Mohamed Nayeem\n"
-	 << "Powerful Chess Engine\n"
+	 << "VIP CHESS ENGINE\n"
 	 << "www.betachess.com";
   ss << (to_uci ? "" : "\n\ninfo string ")
 	 << (to_uci ? "" : std::to_string(n))
 	 << (to_uci ? "" : " Cpu(s) detected")
 	 << (to_uci ? "" : "\ninfo string 16 MB Hash")
-	 << (to_uci ? "" : "\ninfo string Licensed to Stockfish");
+	 << (to_uci ? "" : "\ninfo string Licensed to Betachess");
   return ss.str();
 }
 

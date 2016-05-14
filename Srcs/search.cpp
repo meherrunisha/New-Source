@@ -64,7 +64,7 @@ namespace {
 
   // Razoring and futility margin based on depth
   const int razor_margin[4] = { 483, 570, 603, 554 };
-  Value futility_margin(Depth d) { return Value(240 * d - 80); }
+  Value futility_margin(Depth d, bool pv) { return Value((150 + pv * 95) * d); }
 
   // Futility and reductions lookup tables, initialized at startup
   int FutilityMoveCounts[2][16];  // [improving][depth]
@@ -233,10 +233,6 @@ void MainThread::search() {
   Color us = rootPos.side_to_move();
   Time.init(Limits, us, rootPos.game_ply());
 
-  int contempt = Options["Contempt"] * PawnValueEg / 100; // From centipawns
-  DrawValue[ us] = VALUE_DRAW - Value(contempt);
-  DrawValue[~us] = VALUE_DRAW + Value(contempt);
-
   TB::Hits = 0;
   TB::RootInTB = false;
   TB::UseRule50 = Options["Syzygy50MoveRule"];
@@ -377,6 +373,7 @@ void Thread::search() {
   bestValue = delta = alpha = -VALUE_INFINITE;
   beta = VALUE_INFINITE;
   completedDepth = DEPTH_ZERO;
+  Color us = rootPos.side_to_move();
 
   if (mainThread)
   {
@@ -397,6 +394,7 @@ void Thread::search() {
       multiPV = std::max(multiPV, (size_t)4);
 
   multiPV = std::min(multiPV, rootMoves.size());
+  int contempt = Options["Contempt"] * PawnValueEg / 100; // From centipawns
   unsigned int threads = Threads.size();
 
   // Iterative deepening loop until requested to stop or the target depth is reached.
@@ -446,6 +444,7 @@ void Thread::search() {
               delta = Value(18);
               alpha = std::max(rootMoves[PVIdx].previousScore - delta,-VALUE_INFINITE);
               beta  = std::min(rootMoves[PVIdx].previousScore + delta, VALUE_INFINITE);
+			  contempt = Options["Contempt"] * PawnValueEg / 100;
           }
 
           // Start with a small aspiration window and, in the case of a fail
@@ -454,6 +453,10 @@ void Thread::search() {
           while (true)
           {
               bestValue = ::search<PV>(rootPos, ss, alpha, beta, rootDepth, false);
+			  
+			  contempt += bestValue <= alpha ? -int(delta / 4 + 5) : bestValue >= beta ? int(delta / 4 + 5) : 0;
+			  DrawValue[ us] = VALUE_DRAW - Value(contempt);
+			  DrawValue[~us] = VALUE_DRAW + Value(contempt);
 
               // Bring the best move to the front. It is critical that sorting
               // is done with a stable algorithm because all the values but the
@@ -771,10 +774,10 @@ namespace {
     // Step 7. Futility pruning: child node (skipped when in check)
     if (   !rootNode
         &&  depth < 7 * ONE_PLY
-        &&  eval - futility_margin(depth) >= beta
+               &&  eval - futility_margin(depth, PvNode) >= beta
         &&  eval < VALUE_KNOWN_WIN  // Do not return unproven wins
         &&  pos.non_pawn_material(pos.side_to_move()))
-        return eval - futility_margin(depth);
+               return eval - futility_margin(depth, PvNode);
 
     // Step 8. Null move search with verification search (is omitted in PV nodes)
     if (   !PvNode
@@ -973,7 +976,7 @@ moves_loop: // When in check search starts from here
           // Futility pruning: parent node
           if (predictedDepth < 7 * ONE_PLY)
           {
-              futilityValue = ss->staticEval + futility_margin(predictedDepth) + 256;
+                         futilityValue = ss->staticEval + futility_margin(predictedDepth, PvNode) + 256;
 
               if (futilityValue <= alpha)
               {
