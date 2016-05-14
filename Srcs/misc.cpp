@@ -1,13 +1,13 @@
 /*
-  Nayeem , a UCI chess playing engine derived from Stockfish
+  Al Qahtani , a UCI chess playing engine derived from Stockfish
   
 
-  Nayeem  is free software: you can redistribute it and/or modify
+  Al Qahtani  is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  Nayeem  is distributed in the hope that it will be useful,
+  Al Qahtani  is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -30,7 +30,7 @@ namespace {
 
 /// Version number. If Version is left empty, then compile date in the format
 /// DD-MM-YY and show in engine_info.
-static const string Version = "Nayeem TNT 1.1";
+static const string Version = "Al Qahtani X1";
 
 /// Our fancy logging facility. The trick here is to replace cin.rdbuf() and
 /// cout.rdbuf() with two Tie objects that tie cin and cout to a file stream. We
@@ -114,13 +114,14 @@ const string engine_info(bool to_uci) {
   ss << (Is64Bit ? " 64" : "")
      << (HasPext ? " BMI2" : (HasPopCnt ? " Mod" : ""))
      << (to_uci  ? "\nid author ": " by ")
-     << "Mohamed Nayeem,King Asad\n"
-	 << "This Is Not A Major version. Its Just Test version\n"
+     << "Mohamed Nayeem\n"
+	 << "Powerful Chess Engine\n"
 	 << "www.betachess.com";
   ss << (to_uci ? "" : "\n\ninfo string ")
 	 << (to_uci ? "" : std::to_string(n))
-	 << (to_uci ? "" : " processor(s) detected")
-	 << (to_uci ? "" : "\ninfo string 16 MB Hash");
+	 << (to_uci ? "" : " Cpu(s) detected")
+	 << (to_uci ? "" : "\ninfo string 16 MB Hash")
+	 << (to_uci ? "" : "\ninfo string Licensed to Stockfish");
   return ss.str();
 }
 

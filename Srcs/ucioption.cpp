@@ -1,13 +1,13 @@
 /*
-  Nayeem , a UCI chess playing engine derived from Stockfish
+  Al Qahtani , a UCI chess playing engine derived from Stockfish
   
 
-  Nayeem  is free software: you can redistribute it and/or modify
+  Al Qahtani  is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  Nayeem  is distributed in the hope that it will be useful,
+  Al Qahtani  is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -68,7 +68,7 @@ void init(OptionsMap& o) {
   o["Passed Pawns (Endgame)"]   << Option(100, 0, 200, on_eval);
   o["Space"]                    << Option(100, 0, 200, on_eval);
   o["King Safety"]              << Option(100, 0, 200, on_eval);
-  o["Book File"]                << Option("Nayeem.bin");
+  o["Book File"]                << Option("Al Qahtani.bin");
   o["Best Book Move"]           << Option(false);
   o["Threads"]                  << Option(n, 1, 128, on_threads);
   o["Hash"]                     << Option(16, 1, MaxHashMB, on_hash_size);

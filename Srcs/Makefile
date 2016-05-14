@@ -1,13 +1,13 @@
-# Nayeem , a UCI chess playing engine derived from Stockfish
+# Al Qahtani , a UCI chess playing engine derived from Stockfish
 # Copyright (C) 2004-2008 Tord Romstad (Glaurung author)
 # 
 #
-# Nayeem  is free software: you can redistribute it and/or modify
+# Al Qahtani  is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Nayeem  is distributed in the hope that it will be useful,
+# Al Qahtani  is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -24,7 +24,7 @@
 UNAME = $(shell uname)
 
 ### Executable name
-EXE = Nayeem 
+EXE = Qahtani
 
 ### Installation dir definitions
 PREFIX = /usr/local
@@ -359,7 +359,7 @@ endif
 
 help:
 	@echo ""
-	@echo "To compile Nayeem , type: "
+	@echo "To compile Al Qahtani , type: "
 	@echo ""
 	@echo "make target ARCH=arch [COMP=compiler] [COMPCXX=cxx]"
 	@echo ""
