@@ -1,7 +1,5 @@
 /*
   Al Qahtani , a UCI chess playing engine derived from Stockfish
-  
-
   Al Qahtani  is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -425,3 +423,5 @@ inline bool is_ok(Move m) {
 }
 
 #endif // #ifndef TYPES_H_INCLUDED
+
+#include "tune.h" // Global visibility to tuning setup
