@@ -1,17 +1,15 @@
 /*
-  Al Qahtani , a UCI chess playing engine derived from Stockfish
-  Al Qahtani  is free software: you can redistribute it and/or modify
+  Al Qahtani - A UCI chess engine. Copyright (C) 2013-2015 Mohamed Nayeem
+  Al Qahtani is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-
-  Al Qahtani  is distributed in the hope that it will be useful,
+  Al Qahtani is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-
   You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  along with Al Qahtani. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <algorithm>
@@ -405,6 +403,31 @@ const string Position::fen() const {
   return ss.str();
 }
 
+#ifdef LOMONOSOV_TB
+/// Returns position in Lomonosov format. Side = 0, if white to move, and side = 1 else.
+/// psqW, psqB = positions of pieces in 0..63 format.
+/// poCount = counts of pieces.
+/// sqEnP = square of enpass.
+void Position::lomonosov_position(int *side, unsigned int *psqW, unsigned int *psqB, int *piCount, int *sqEnP) {
+	*side = sideToMove;
+	unsigned int *psq_tmp;
+	for (int i = 0; i < 10; i++) {
+		Color color = (Color)(i / 5);
+		PieceType pcType = (PieceType)((i % 5) + 1);
+		piCount[i] = pieceCount[color][pcType];
+		if (i < 5)
+			psq_tmp = psqW;
+		else
+			psq_tmp = psqB;
+		for (int j = 0; j < piCount[i]; j++) {
+			psq_tmp[(i % 5)*C_PIECES + j] = pieceList[color][pcType][j];
+		}
+	}
+	psqW[KING_INDEX] = pieceList[WHITE][KING][0];
+	psqB[KING_INDEX] = pieceList[BLACK][KING][0];
+	*sqEnP = ep_square();
+}
+#endif
 
 
 /// Position::game_phase() calculates the game phase interpolating total non-pawn

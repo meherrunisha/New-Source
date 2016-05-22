@@ -1,17 +1,15 @@
 /*
-  Al Qahtani , a UCI chess playing engine derived from Stockfish
-  Al Qahtani  is free software: you can redistribute it and/or modify
+  Al Qahtani - A UCI chess engine. Copyright (C) 2013-2015 Mohamed Nayeem
+  Al Qahtani is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-
-  Al Qahtani  is distributed in the hope that it will be useful,
+  Al Qahtani is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-
   You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  along with Al Qahtani. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <fstream>
@@ -88,9 +86,9 @@ public:
 
 } // namespace
 
-/// engine_info() returns the full name of the current Stockfish version. This
-/// will be either "Stockfish <Tag> DD-MM-YY" (where DD-MM-YY is the date when
-/// the program was compiled) or "Stockfish <Version>", depending on whether
+/// engine_info() returns the full name of the current Al Qahtani version. This
+/// will be either "Al Qahtani <Tag> DD-MM-YY" (where DD-MM-YY is the date when
+/// the program was compiled) or "Al Qahtani <Version>", depending on whether
 /// Version is empty.
 
 const string engine_info(bool to_uci) {

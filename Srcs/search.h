@@ -1,17 +1,15 @@
 /*
-  Al Qahtani , a UCI chess playing engine derived from Stockfish
-  Al Qahtani  is free software: you can redistribute it and/or modify
+  Al Qahtani - A UCI chess engine. Copyright (C) 2013-2015 Mohamed Nayeem
+  Al Qahtani is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-
-  Al Qahtani  is distributed in the hope that it will be useful,
+  Al Qahtani is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-
   You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  along with Al Qahtani. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef SEARCH_H_INCLUDED
@@ -102,4 +100,13 @@ template<bool Root = true> uint64_t perft(Position& pos, Depth depth);
 
 } // namespace Search
 
+#ifdef LOMONOSOV_TB
+namespace Tablebases {
+extern bool lomonosov_tb_use_opt;
+extern bool use_tables;
+extern int max_tb_pieces;
+}
+#endif
+
 #endif // #ifndef SEARCH_H_INCLUDED
+

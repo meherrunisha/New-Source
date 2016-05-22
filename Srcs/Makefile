@@ -1,19 +1,14 @@
-# Al Qahtani , a UCI chess playing engine derived from Stockfish
-# Copyright (C) 2004-2008 Tord Romstad (Glaurung author)
-# 
-#
-# Al Qahtani  is free software: you can redistribute it and/or modify
+# Al Qahtani - A UCI chess engine. Copyright (C) 2013-2015 Mohamed Nayeem
+# Al Qahtani is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
-# Al Qahtani  is distributed in the hope that it will be useful,
+# Al Qahtani is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with Al Qahtani. If not, see <http://www.gnu.org/licenses/>.
 
 
 ### ==========================================================================
@@ -36,7 +31,15 @@ PGOBENCH = ./$(EXE) bench 16 1 1000 default time
 ### Object files
 OBJS = benchmark.o bitbase.o bitboard.o book.o endgame.o evaluate.o main.o \
 	material.o misc.o movegen.o movepick.o opt.o pawns.o position.o psqt.o \
-	search.o thread.o timeman.o tt.o uci.o ucioption.o syzygy/tbprobe.o
+	search.o thread.o timeman.o tt.o uci.o ucioption.o
+	
+ifeq ($(SYZYGY),yes)
+	OBJS += syzygy/tbprobe.o
+endif
+
+ifeq ($(LOMONOSOV),yes)
+	OBJS += lmtb.o lomonosov_probe.o
+endif
 
 ### ==========================================================================
 ### Section 2. High-level Configuration
@@ -144,6 +147,13 @@ endif
 ### 3.1 Selecting compiler (default = gcc)
 
 CXXFLAGS += -Wall -Wcast-qual -fno-exceptions -fno-rtti -std=c++11 $(EXTRACXXFLAGS)
+ifeq ($(SYZYGY),yes)
+	CXXFLAGS += -DSYZYGY_TB
+endif
+ifeq ($(LOMONOSOV),yes)
+	CXXFLAGS += -DLOMONOSOV_TB
+endif
+
 DEPENDFLAGS += -std=c++11
 LDFLAGS += $(EXTRALDFLAGS)
 
@@ -390,6 +400,10 @@ help:
 	@echo "mingw                   > Gnu compiler with MinGW under Windows"
 	@echo "clang                   > LLVM Clang compiler"
 	@echo "icc                     > Intel compiler"
+	@echo ""
+	@echo "Supported tablebases:"
+	@echo "LOMONOSOV=yes           > Support of Lomonosov Tablebases"
+	@echo "SYZYGY=yes              > Support of Syzygy Tablebases"
 	@echo ""
 	@echo "Simple examples. If you don't know what to do, you likely want to run: "
 	@echo ""

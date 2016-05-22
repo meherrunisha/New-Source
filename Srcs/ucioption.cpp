@@ -1,22 +1,21 @@
 /*
-  Al Qahtani , a UCI chess playing engine derived from Stockfish
-  Al Qahtani  is free software: you can redistribute it and/or modify
+  Al Qahtani - A UCI chess engine. Copyright (C) 2013-2015 Mohamed Nayeem
+  Al Qahtani is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-
-  Al Qahtani  is distributed in the hope that it will be useful,
+  Al Qahtani is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-
   You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  along with Al Qahtani. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <algorithm>
 #include <cassert>
 #include <ostream>
+#include <iostream>
 
 #include "evaluate.h"
 #include <thread>
@@ -25,7 +24,15 @@
 #include "thread.h"
 #include "tt.h"
 #include "uci.h"
+
+#ifdef SYZYGY_TB
 #include "syzygy/tbprobe.h"
+#endif
+
+#ifdef LOMONOSOV_TB
+#include "lomonosov_probe.h"
+#include "lmtb.h"
+#endif
 
 using std::string;
 
@@ -33,14 +40,59 @@ UCI::OptionsMap Options; // Global object
 
 namespace UCI {
 
+#ifdef LOMONOSOV_TB
+#ifndef TB_DLL_EXPORT
+	bool tb_stat = true;
+#endif
+#endif
+
 /// 'On change' actions, triggered by an option's value change
 void on_clear_hash(const Option&) { Search::clear(); }
 void on_hash_size(const Option& o) { TT.resize(o); }
 void on_logger(const Option& o) { start_logger(o); }
 void on_eval(const Option&) { Eval::init(); }
 void on_threads(const Option&) { Threads.read_uci_options(); }
-void on_tb_path(const Option& o) { Tablebases::init(o); }
 
+#ifdef SYZYGY_TB
+void on_tb_path(const Option& o) { Tablebases::init(o); }
+#endif
+#ifdef LOMONOSOV_TB
+void on_tb_used(const Option& o) {
+	Tablebases::lomonosov_tb_use_opt = int(o);
+}
+void on_server_mode(const Option& o) {
+	bool server_mode = bool(o);
+	int result = lomonosov_change_server_mode(server_mode, Options["Lomonosov Server Console"]);
+	sync_cout << "Lomonosov tables are" << (result == -1 ? " not" : "") << " loaded" << sync_endl;
+}
+void on_lomonosov_tb_path(const Option& o) {
+	char path[MAX_PATH];
+	strcpy(path, ((std::string)o).c_str());
+	tb_add_table_path(((std::string)o).c_str());
+	Tablebases::max_tb_pieces = tb_get_max_pieces_count_with_order();
+	sync_cout << "Lomonosov_TB: " << "max pieces count is " << Tablebases::max_tb_pieces << sync_endl;
+}
+void on_tb_cache(const Option& o) {
+	int cache = (int)o;
+	tb_set_cache_size(cache);
+}
+void on_tb_order(const Option& o) {
+	bool result = tb_set_table_order(((std::string)o).c_str());
+	if (!result)
+		sync_cout << "Lomonosov_TB: " << "Table order\"" << (std::string)o << "\" cannot set!" << sync_endl;
+	Tablebases::max_tb_pieces = tb_get_max_pieces_count_with_order();
+	sync_cout << "Lomonosov_TB: " << "Max pieces count is " << Tablebases::max_tb_pieces << sync_endl;
+}
+#ifndef TB_DLL_EXPORT
+void on_tb_logging(const Option& o) {
+	bool logging = int(o);
+	tb_set_logging(logging);
+}
+void on_tb_stat(const Option& o) {
+	tb_stat = int(o);
+}
+#endif
+#endif
 
 /// Our case insensitive less() function as required by UCI protocol
 bool CaseInsensitiveLess::operator() (const string& s1, const string& s2) const {
@@ -80,15 +132,31 @@ void init(OptionsMap& o) {
   o["Slow Mover"]               << Option(89, 10, 1000);
   o["nodestime"]                << Option(0, 0, 10000);
   o["UCI_Chess960"]             << Option(false);
-  o["SyzygyPath"]               << Option("<empty>", on_tb_path);
-  o["SyzygyProbeDepth"]         << Option(1, 1, 100);
-  o["Syzygy50MoveRule"]         << Option(true);
-  o["SyzygyProbeLimit"]         << Option(6, 0, 6);
+#ifdef SYZYGY_TB
+  o["SyzygyPath"]            << Option("<empty>", on_tb_path);
+  o["SyzygyProbeDepth"]      << Option(1, 1, 100);
+  o["Syzygy50MoveRule"]      << Option(true);
+  o["SyzygyProbeLimit"]      << Option(6, 0, 6);
+#endif
+#ifdef LOMONOSOV_TB
+  o["Lomonosov Using"]       << Option(true, on_tb_used);
+  o["Lomonosov Server Console"] << Option(false);
+  o["Lomonosov Server Mode"] << Option(false, on_server_mode);
+  o["Lomonosov Path"]        << Option("", on_lomonosov_tb_path);
+  o["Lomonosov Cache"]       << Option(2048, 0, 32768, on_tb_cache);
+  o["Lomonosov Order"]       << Option("PL;WL", on_tb_order);
+  o["Lomonosov Depth Min"]   << Option(1, 1, 100);
+  o["Lomonosov Depth Max"]   << Option(100, 1, 100);
+#ifndef TB_DLL_EXPORT
+  o["Lomonosov Logging"]     << Option(false, on_tb_logging);
+  o["Lomonosov Stat"]        << Option(true, on_tb_stat);
+#endif
+#endif
   // Hanging pieces
   o["Hanging (Midgame)"]        << Option(49, -10, 250);
   o["Hanging (Endgame)"]        << Option(27, -10, 250);
   
-
+  
 }
 
 

@@ -1,17 +1,15 @@
 /*
-  Al Qahtani , a UCI chess playing engine derived from Stockfish
-  Al Qahtani  is free software: you can redistribute it and/or modify
+  Al Qahtani - A UCI chess engine. Copyright (C) 2013-2015 Mohamed Nayeem
+  Al Qahtani is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-
-  Al Qahtani  is distributed in the hope that it will be useful,
+  Al Qahtani is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-
   You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  along with Al Qahtani. If not, see <http://www.gnu.org/licenses/>.
 */
 
 extern int large_use; // AQ
@@ -80,7 +78,7 @@ const vector<string> Defaults = {
 
 } // namespace
 
-/// benchmark() runs a simple benchmark by letting Stockfish analyze a set
+/// benchmark() runs a simple benchmark by letting Al Qahtani analyze a set
 /// of positions for a given limit each. There are five parameters: the
 /// transposition table size, the number of search threads that should
 /// be used, the limit value spent for each position (optional, default is
