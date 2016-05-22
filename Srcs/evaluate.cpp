@@ -190,7 +190,7 @@ namespace {
         Score Hanging            = S(48, 27);
   const Score PawnAttackThreat   = S(38, 22);
   const Score SafeCheck          = S(20, 20);
-  const Score OtherCheck         = S(10,  0);
+  const Score OtherCheck         = S(14, 14);
 
   // Penalty for a bishop on a1/h1 (a8/h8 for black) which is trapped by
   // a friendly pawn on b2/g2 (b7/g7 for black). This can obviously only
@@ -219,11 +219,11 @@ namespace {
   const int KingAttackWeights[PIECE_TYPE_NB] = { 0, 0, 7, 5, 4, 1 };
 
   // Penalties for enemy's safe checks
-  const int QueenContactCheck = 81;
-  const int QueenCheck        = 52;
-  const int RookCheck         = 45;
-  const int BishopCheck       = 5;
-  const int KnightCheck       = 17;
+  const int QueenContactCheck = 67;
+  const int QueenCheck        = 58;
+  const int RookCheck         = 58;
+  const int BishopCheck       = 52;
+  const int KnightCheck       = 88;
 
   // KingDanger[attackUnits] contains the actual king danger weighted
   // scores, indexed by a calculated integer number.
@@ -429,12 +429,12 @@ namespace {
         // number and types of the enemy's attacking pieces, the number of
         // attacked and undefended squares around our king and the quality of
         // the pawn shelter (current 'score' value).
-        attackUnits =  std::min(68, ei.kingAttackersCount[Them] * ei.kingAttackersWeight[Them])
+        attackUnits =  std::min(78, ei.kingAttackersCount[Them] * ei.kingAttackersWeight[Them])
                      +  9 * ei.kingAdjacentZoneAttacksCount[Them]
-                     + 24 * popcount(undefended)
+                     + 20 * popcount(undefended)
 					 + 11 * popcount(b)
 					 + 10 * !!ei.pinnedPieces[Us]
-					 - 62 * !pos.count<QUEEN>(Them)
+					 - 73 * !pos.count<QUEEN>(Them)
                      - mg_value(score) / 8
 					 - eg_value(score) / 12;
 
